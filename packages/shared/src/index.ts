@@ -36,3 +36,5 @@ export interface GeolocationQuery {
   category?: Category;
   searchTerm?: string;
 }
+
+export type ShopInput = Omit<Shop, "id"> & { id?: string };

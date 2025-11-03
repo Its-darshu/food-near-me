@@ -12,8 +12,7 @@
 
 - [x] Create and Run Task (Added VS Code tasks for frontend/backend dev servers and verified frontend task launch.)
 
-- [ ] Launch the Project
-  Prompt user for debug mode, launch only if confirmed.
+- [x] Launch the Project (Backend and frontend dev servers started via VS Code tasks.)
 
 - [x] Ensure Documentation is Complete (README refreshed and instructions cleaned of HTML comments.)
 
