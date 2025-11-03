@@ -1,0 +1,30 @@
+{
+  "name": "@food-near-me/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "test": "node -e \"console.log('No tests yet')\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,json}\""
+  },
+  "dependencies": {
+    "@food-near-me/shared": "workspace:*",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.4",
+    "@types/node": "^20.10.5",
+    "tsx": "^4.1.2",
+    "typescript": "^5.4.0"
+  }
+}

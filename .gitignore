@@ -1,0 +1,8 @@
+node_modules/
+dist/
+build/
+.vscode/
+.env
+.env.local
+.pnpm-store/
+.DS_Store

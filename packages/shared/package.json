@@ -1,0 +1,17 @@
+{
+  "name": "@food-near-me/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "test": "node -e \"console.log('No tests yet')\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,json}\""
+  }
+}
