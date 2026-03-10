@@ -19,6 +19,7 @@ export interface Shop {
   rating: number;
   description?: string;
   imageUrl: string;
+  storagePath?: string;
   contact: ContactInfo;
   location: ShopLocation;
   tags?: string[];

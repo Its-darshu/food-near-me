@@ -1,8 +1,9 @@
-import type { GeolocationQuery, Shop } from "@food-near-me/shared";
+import type { GeolocationQuery, Shop, ShopInput } from "@food-near-me/shared";
 import type { ShopLocation } from "@food-near-me/shared";
 import { staticShops } from "../data/shops";
 import { distanceInKm } from "../utils/geo";
 import { getFirestoreClient, getShopsCollectionName } from "../config/firebase";
+import { deleteFileIfExists } from "./storage";
 
 const DEFAULT_COORDINATES: Pick<ShopLocation, "latitude" | "longitude"> = {
   latitude: 12.9716,
@@ -103,4 +104,79 @@ export const getShopById = async (id: string): Promise<Shop | undefined> => {
   }
 
   return staticShops.find((shop) => shop.id === id);
+};
+
+const ensureFirestore = () => {
+  const firestore = getFirestoreClient();
+  if (!firestore) {
+    throw new Error("Firestore is not configured");
+  }
+  return firestore;
+};
+
+const mergeShop = (existing: Shop, input: Partial<ShopInput>): Shop => ({
+  ...existing,
+  ...input,
+  contact: {
+    ...existing.contact,
+    ...(input.contact ?? {})
+  },
+  location: {
+    ...existing.location,
+    ...(input.location ?? {})
+  }
+});
+
+export const createShop = async (input: ShopInput): Promise<Shop> => {
+  const firestore = ensureFirestore();
+  const collection = firestore.collection(getShopsCollectionName());
+  const docRef = input.id ? collection.doc(input.id) : collection.doc();
+
+  const shop: Shop = {
+    ...input,
+    id: docRef.id,
+    contact: { ...input.contact },
+    location: { ...input.location }
+  } as Shop;
+
+  await docRef.set(shop, { merge: false });
+  return shop;
+};
+
+export const updateShop = async (id: string, input: Partial<ShopInput>): Promise<Shop> => {
+  const firestore = ensureFirestore();
+  const docRef = firestore.collection(getShopsCollectionName()).doc(id);
+  const snapshot = await docRef.get();
+
+  if (!snapshot.exists) {
+    throw new Error("Shop not found");
+  }
+
+  const existing = snapshot.data() as Shop;
+  const next = mergeShop(existing, input);
+
+  await docRef.set(next, { merge: false });
+
+  if (input.storagePath && existing.storagePath && existing.storagePath !== input.storagePath) {
+    await deleteFileIfExists(existing.storagePath);
+  }
+
+  return next;
+};
+
+export const deleteShop = async (id: string): Promise<void> => {
+  const firestore = ensureFirestore();
+  const docRef = firestore.collection(getShopsCollectionName()).doc(id);
+  const snapshot = await docRef.get();
+
+  if (!snapshot.exists) {
+    return;
+  }
+
+  const existing = snapshot.data() as Shop;
+  await docRef.delete();
+
+  if (existing.storagePath) {
+    await deleteFileIfExists(existing.storagePath);
+  }
 };
